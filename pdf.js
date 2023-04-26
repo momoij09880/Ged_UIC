@@ -1,23 +1,42 @@
-const pdfjsLib = require('pdfjs-dist');
+const fs = require('fs');
+const PDFParser = require('pdf-parse');
 
-// Chemin du fichier PDF que vous souhaitez extraire
-const pdfPath = 'chemin/vers/votre/fichier.pdf';
+// Charger le contenu du fichier PDF
+const pdfBuffer = fs.readFileSync("C:/Users/ATSAI/Downloads/tre.pdf.pdf");
 
-// Fonction qui récupère les données du PDF
-async function getDataFromPdf() {
-  const pdf = await pdfjsLib.getDocument(pdfPath).promise;
-  const numPages = pdf.numPages;
-  const data = [];
+// Parse du contenu du PDF
+let longueur;
+let diviseur;
+let max;
+let text1="";
+let nbr=0;
+PDFParser(pdfBuffer)
+  .then(data => {
+    // Récupérer le contenu textuel de la première page du PDF
+    //const page = data.getTextContent();
+    //console.log('Contenu de la page 1 du PDF :', page.getTextContent);
 
-  // Boucle à travers chaque page du PDF
-  for (let i = 1; i <= numPages; i++) {
-    const page = await pdf.getPage(i);
-    const content = await page.getTextContent();
-    const strings = content.items.map(item => item.str);
-    data.push(strings);
+    //console.log(data.text[101].toString());
+     
+    /**let mo="";
+  for(let i=0;i<4000;i++){
+    mo+=data.text[i].toString()
   }
+  console.log(mo); */
 
-  console.log(data);
-}
 
-getDataFromPdf();
+  longueur= data.text.length;
+  diviseur=longueur/4000;
+  max=longueur/diviseur;
+  console.log(max);
+  
+  while(nbr<max){
+    text1+=data.text[nbr];
+    nbr++;
+  }
+  console.log(text1);
+
+  })
+  .catch(error => {
+    console.error('Erreur lors de l\'extraction du contenu du PDF :', error);
+  });
